@@ -102,7 +102,7 @@ const leadSchema = new mongoose.Schema({
 });
 
 // Indexes for better query performance
-leadSchema.index({ email: 1 });
+// Remove the email index since User model already has unique email constraint
 leadSchema.index({ status: 1 });
 leadSchema.index({ source: 1 });
 leadSchema.index({ company: 1 });
