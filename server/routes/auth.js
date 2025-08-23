@@ -66,9 +66,21 @@ router.post('/register', [
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/', // Ensure cookie is available for all paths
+      domain: process.env.NODE_ENV === 'production' ? undefined : undefined // Let browser handle domain
     });
+
+    console.log('Cookie set with options:', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      path: '/',
+      domain: process.env.NODE_ENV === 'production' ? undefined : undefined
+    });
+    console.log('Token length:', token.length);
+    console.log('Response headers:', res.getHeaders());
 
     res.status(201).json({
       success: true,
@@ -156,9 +168,21 @@ router.post('/login', [
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/', // Ensure cookie is available for all paths
+      domain: process.env.NODE_ENV === 'production' ? undefined : undefined // Let browser handle domain
     });
+
+    console.log('Cookie set with options:', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      path: '/',
+      domain: process.env.NODE_ENV === 'production' ? undefined : undefined
+    });
+    console.log('Token length:', token.length);
+    console.log('Response headers:', res.getHeaders());
 
     res.status(200).json({
       success: true,
@@ -193,7 +217,7 @@ router.post('/logout', (req, res) => {
     res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax'
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     });
 
     res.status(200).json({

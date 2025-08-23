@@ -32,11 +32,13 @@ app.use(cors({
   origin: [
     'http://localhost:3000', // Local development
     'https://erino-assignment-lms.vercel.app', // Your Vercel domain
+    'https://lead-management-frontend.vercel.app', // Add your actual frontend domain
     process.env.FRONTEND_URL
   ].filter(Boolean), // Remove undefined values
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Cookie'],
+  exposedHeaders: ['Set-Cookie'],
   optionsSuccessStatus: 204
 }));
 
@@ -45,6 +47,15 @@ app.options('*', cors());
 
 // Cookie parsing middleware
 app.use(cookieParser());
+
+// Debug middleware to log all requests and cookies
+app.use((req, res, next) => {
+  console.log(`\n🔍 ${req.method} ${req.path}`);
+  console.log('📋 Request cookies:', Object.keys(req.cookies || {}));
+  console.log('🌐 Origin:', req.headers.origin);
+  console.log('🔑 Authorization header:', !!req.headers.authorization);
+  next();
+});
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
