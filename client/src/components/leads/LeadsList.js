@@ -164,8 +164,8 @@ const LeadsList = () => {
     filter: true,
     resizable: true,
     floatingFilter: false,
-    suppressMenu: false,
-    suppressMovableColumns: true,
+    suppressHeaderMenuButton: false, // Updated from suppressMenu
+    suppressMovable: true, // Updated from suppressMovableColumns
     suppressSizeToFit: false
   }), []);
 
@@ -629,8 +629,7 @@ const LeadsList = () => {
                  domLayout="autoHeight"
                  suppressRowClickSelection={true}
                  suppressCellFocus={true}
-                 suppressMovableColumns={true}
-                 suppressMenuHide={true}
+                 suppressMovable={true}
                  enableCellTextSelection={true}
                  rowSelection="single"
                  animateRows={true}
@@ -638,8 +637,6 @@ const LeadsList = () => {
                  suppressColumnVirtualisation={false}
                  suppressRowVirtualisation={false}
                  enableRangeSelection={false}
-                 suppressCopyRowsToClipboard={true}
-                 suppressExportSingleFileRichtextToCSV={true}
                />
              </div>
          )}

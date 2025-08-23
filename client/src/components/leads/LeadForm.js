@@ -497,6 +497,7 @@ const LeadForm = () => {
                 </label>
                 <div className="space-y-3">
                   <input
+                    id="tags"
                     type="text"
                     placeholder="Type a tag and press Enter"
                     onKeyDown={handleTagInput}
