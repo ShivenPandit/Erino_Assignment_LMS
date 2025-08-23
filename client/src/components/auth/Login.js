@@ -57,7 +57,7 @@ const Login = () => {
                     <Mail className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    id="email"
+                    id="login-email"
                     type="email"
                     autoComplete="email"
                     className={`input pl-10 ${errors.email ? 'input-error' : ''}`}
@@ -85,7 +85,7 @@ const Login = () => {
                     <Lock className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    id="password"
+                    id="login-password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
                     className={`input pl-10 pr-10 ${errors.password ? 'input-error' : ''}`}

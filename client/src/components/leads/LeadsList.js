@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AgGridReact } from 'ag-grid-react';
 import { Plus, Eye, Edit, Trash2, Filter, Download, RefreshCw, Users } from 'lucide-react';
 import api from '../../utils/axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+
 
 const LeadsList = () => {
   const { user, loading: authLoading } = useAuth();
@@ -34,140 +33,31 @@ const LeadsList = () => {
     hasPrevPage: false
   });
 
-  // AG Grid column definitions
-  const columnDefs = useMemo(() => [
-    {
-      headerName: 'Name',
-      field: 'firstName',
-      valueGetter: (params) => `${params.data.firstName} ${params.data.lastName}`,
-      sortable: true,
-      filter: true,
-      width: 150
-    },
-    {
-      headerName: 'Email',
-      field: 'email',
-      sortable: true,
-      filter: true,
-      width: 200
-    },
-    {
-      headerName: 'Company',
-      field: 'company',
-      sortable: true,
-      filter: true,
-      width: 150
-    },
-    {
-      headerName: 'Phone',
-      field: 'phone',
-      sortable: true,
-      filter: true,
-      width: 130
-    },
-    {
-      headerName: 'Status',
-      field: 'status',
-      sortable: true,
-      filter: true,
-      cellRenderer: (params) => {
-        const status = params.data.status;
-        const statusColors = {
-          'new': 'bg-blue-100 text-blue-800',
-          'contacted': 'bg-yellow-100 text-yellow-800',
-          'qualified': 'bg-green-100 text-green-800',
-          'won': 'bg-emerald-100 text-emerald-800',
-          'lost': 'bg-red-100 text-red-800'
-        };
-        return `<span class="px-2 py-1 text-xs font-medium rounded-full ${statusColors[status] || 'bg-gray-100 text-gray-800'}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
-      },
-      width: 120
-    },
-    {
-      headerName: 'Source',
-      field: 'source',
-      sortable: true,
-      filter: true,
-      valueGetter: (params) => params.data.source.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
-      width: 120
-    },
-    {
-      headerName: 'Score',
-      field: 'score',
-      sortable: true,
-      filter: true,
-      valueGetter: (params) => `${params.data.score}%`,
-      width: 120
-    },
-    {
-      headerName: 'Value',
-      field: 'leadValue',
-      sortable: true,
-      filter: true,
-      valueGetter: (params) => `$${params.data.leadValue?.toLocaleString() || 0}`,
-      width: 120
-    },
-    {
-      headerName: 'Qualified',
-      field: 'isQualified',
-      sortable: true,
-      filter: true,
-      cellRenderer: (params) => {
-        return params.data.isQualified ? 
-          '<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Yes</span>' :
-          '<span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">No</span>';
-      },
-      width: 100
-    },
-    {
-      headerName: 'Created',
-      field: 'createdAt',
-      sortable: true,
-      filter: true,
-      valueGetter: (params) => new Date(params.data.createdAt).toLocaleDateString(),
-      width: 120
-    },
-    {
-      headerName: 'Actions',
-      field: 'actions',
-      sortable: false,
-      filter: false,
-      cellRenderer: (params) => {
-        return `
-          <div class="flex items-center gap-2">
-            <button class="p-1 text-gray-400 hover:text-primary-600 transition-colors" title="View Lead" onclick="window.viewLead('${params.data._id}')">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-              </svg>
-            </button>
-            <button class="p-1 text-gray-400 hover:text-warning-600 transition-colors" title="Edit Lead" onclick="window.editLead('${params.data._id}')">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-              </svg>
-            </button>
-            <button class="p-1 text-gray-400 hover:text-red-600 transition-colors" title="Delete Lead" onclick="window.deleteLead('${params.data._id}')">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-              </svg>
-            </button>
-          </div>
-        `;
-      },
-      width: 150
-    }
-  ], []);
+  // Action button handlers
+  const handleViewLead = useCallback((leadId) => {
+    navigate(`/leads/${leadId}`);
+  }, [navigate]);
 
-  // AG Grid default column definitions
-  const defaultColDef = useMemo(() => ({
-    sortable: true,
-    filter: true,
-    resizable: true,
-    floatingFilter: false,
-    suppressHeaderMenuButton: false, // Updated from suppressMenu
-    suppressMovable: true, // Updated from suppressMovableColumns
-    suppressSizeToFit: false
-  }), []);
+  const handleEditLead = useCallback((leadId) => {
+    navigate(`/leads/${leadId}/edit`);
+  }, [navigate]);
+
+  const handleDeleteLead = useCallback(async (leadId) => {
+    if (window.confirm('Are you sure you want to delete this lead?')) {
+      try {
+        await api.delete(`/api/leads/${leadId}`);
+        toast.success('Lead deleted successfully');
+        fetchLeads(pagination.currentPage);
+      } catch (error) {
+        console.error('Error deleting lead:', error);
+        toast.error('Failed to delete lead');
+      }
+    }
+  }, [pagination.currentPage]);
+
+
+
+
 
   // Fetch leads function wrapped in useCallback to prevent recreation
   const fetchLeads = useCallback(async (page = 1, customFilters = null) => {
@@ -194,6 +84,8 @@ const LeadsList = () => {
       
       if (response.data.success) {
         console.log('Setting leads:', response.data.data.leads);
+        console.log('Sample lead data:', response.data.data.leads[0]);
+        console.log('Leads count:', response.data.data.leads.length);
         setLeads(response.data.data.leads);
         // Update pagination with the new page
         const newPagination = {
@@ -257,20 +149,6 @@ const LeadsList = () => {
     fetchLeads(page, filters);
   };
 
-  // Handle lead deletion
-  const handleDeleteLead = async (leadId) => {
-    if (window.confirm('Are you sure you want to delete this lead?')) {
-      try {
-        await api.delete(`/api/leads/${leadId}`);
-        toast.success('Lead deleted successfully');
-        fetchLeads(pagination.currentPage, filters);
-      } catch (error) {
-        console.error('Error deleting lead:', error);
-        toast.error('Failed to delete lead');
-      }
-    }
-  };
-
   // Export leads
   const exportLeads = () => {
     const csvContent = [
@@ -301,19 +179,7 @@ const LeadsList = () => {
     toast.success('Leads exported successfully');
   };
 
-  // Set up global functions for AG Grid actions
-  useEffect(() => {
-    window.viewLead = (leadId) => navigate(`/leads/${leadId}`);
-    window.editLead = (leadId) => navigate(`/leads/${leadId}/edit`);
-    window.deleteLead = (leadId) => handleDeleteLead(leadId);
-    
-    // Cleanup function
-    return () => {
-      delete window.viewLead;
-      delete window.editLead;
-      delete window.deleteLead;
-    };
-  }, [navigate]);
+     
 
   if (authLoading) {
     return (
@@ -628,27 +494,95 @@ const LeadsList = () => {
                Add Lead
              </button>
            </div>
-         ) : (
-                        <div className="ag-theme-alpine w-full" style={{ minHeight: '400px', height: 'auto' }}>
-               <AgGridReact
-                 columnDefs={columnDefs}
-                 defaultColDef={defaultColDef}
-                 rowData={leads}
-                 pagination={false}
-                 paginationPageSize={pagination.itemsPerPage}
-                 domLayout="autoHeight"
-                 suppressRowClickSelection={true}
-                 suppressCellFocus={true}
-                 suppressMovable={true}
-                 enableCellTextSelection={true}
-                 rowSelection="single"
-                 animateRows={true}
-                 rowHeight={50}
-                 suppressColumnVirtualisation={false}
-                 suppressRowVirtualisation={false}
-                 enableRangeSelection={false}
-               />
-             </div>
+                  ) : (
+           <div className="overflow-x-auto">
+             <table className="min-w-full divide-y divide-gray-200">
+               <thead className="bg-gray-50">
+                 <tr>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qualified</th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                 </tr>
+               </thead>
+               <tbody className="bg-white divide-y divide-gray-200">
+                 {leads.map((lead) => (
+                   <tr key={lead._id} className="hover:bg-gray-50">
+                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                       {lead.firstName} {lead.lastName}
+                     </td>
+                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.email}</td>
+                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.company}</td>
+                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.phone}</td>
+                     <td className="px-6 py-4 whitespace-nowrap">
+                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                         lead.status === 'new' ? 'bg-blue-100 text-blue-800' :
+                         lead.status === 'contacted' ? 'bg-yellow-100 text-yellow-800' :
+                         lead.status === 'qualified' ? 'bg-green-100 text-green-800' :
+                         lead.status === 'won' ? 'bg-emerald-100 text-emerald-800' :
+                         lead.status === 'lost' ? 'bg-red-100 text-red-800' :
+                         'bg-gray-100 text-gray-800'
+                       }`}>
+                         {lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
+                       </span>
+                     </td>
+                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                       {lead.source.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                     </td>
+                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.score}%</td>
+                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                       ${lead.leadValue?.toLocaleString() || 0}
+                     </td>
+                     <td className="px-6 py-4 whitespace-nowrap">
+                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                         lead.isQualified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                       }`}>
+                         {lead.isQualified ? 'Yes' : 'No'}
+                       </span>
+                     </td>
+                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                       {new Date(lead.createdAt).toLocaleDateString()}
+                     </td>
+                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                       <div className="flex items-center gap-2">
+                         <button
+                           className="px-2 py-1 text-blue-600 hover:text-blue-800 transition-colors border border-blue-200 rounded"
+                           title="View Lead"
+                           onClick={() => handleViewLead(lead._id)}
+                           style={{ minWidth: '32px', height: '32px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                         >
+                           <Eye className="h-4 w-4" />
+                         </button>
+                         <button
+                           className="px-2 py-1 text-yellow-600 hover:text-yellow-800 transition-colors border border-yellow-200 rounded"
+                           title="Edit Lead"
+                           onClick={() => handleEditLead(lead._id)}
+                           style={{ minWidth: '32px', height: '32px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                         >
+                           <Edit className="h-4 w-4" />
+                         </button>
+                         <button
+                           className="px-2 py-1 text-red-600 hover:text-red-800 transition-colors border border-red-200 rounded"
+                           title="Delete Lead"
+                           onClick={() => handleDeleteLead(lead._id)}
+                           style={{ minWidth: '32px', height: '32px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                         >
+                           <Trash2 className="h-4 w-4" />
+                         </button>
+                       </div>
+                     </td>
+                   </tr>
+                 ))}
+               </tbody>
+             </table>
+           </div>
          )}
          </div>
        </div>

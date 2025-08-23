@@ -62,7 +62,7 @@ const Register = () => {
                       <User className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
-                      id="firstName"
+                      id="register-first-name"
                       type="text"
                       autoComplete="given-name"
                       className={`input pl-10 ${errors.firstName ? 'input-error' : ''}`}
@@ -94,7 +94,7 @@ const Register = () => {
                       <User className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
-                      id="lastName"
+                      id="register-last-name"
                       type="text"
                       autoComplete="family-name"
                       className={`input pl-10 ${errors.lastName ? 'input-error' : ''}`}
@@ -127,7 +127,7 @@ const Register = () => {
                     <Mail className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    id="email"
+                    id="register-email"
                     type="email"
                     autoComplete="email"
                     className={`input pl-10 ${errors.email ? 'input-error' : ''}`}
@@ -155,11 +155,11 @@ const Register = () => {
                     <Lock className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    id="password"
+                    id="register-password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="new-password"
                     className={`input pl-10 pr-10 ${errors.password ? 'input-error' : ''}`}
-                    placeholder="Create a password"
+                    placeholder="Enter your password"
                     {...register('password', {
                       required: 'Password is required',
                       minLength: {

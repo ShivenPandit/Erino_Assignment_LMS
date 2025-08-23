@@ -129,9 +129,10 @@ const LeadForm = () => {
                   First Name *
                 </label>
                 <input
-                  id="firstName"
+                  id="lead-first-name"
                   type="text"
-                  className={`input ${errors.firstName ? 'input-error' : ''}`}
+                  autoComplete="given-name"
+                  className={`input pl-10 ${errors.firstName ? 'input-error' : ''}`}
                   placeholder="Enter first name"
                   {...register('firstName', {
                     required: 'First name is required',
@@ -155,9 +156,10 @@ const LeadForm = () => {
                   Last Name *
                 </label>
                 <input
-                  id="lastName"
+                  id="lead-last-name"
                   type="text"
-                  className={`input ${errors.lastName ? 'input-error' : ''}`}
+                  autoComplete="family-name"
+                  className={`input pl-10 ${errors.lastName ? 'input-error' : ''}`}
                   placeholder="Enter last name"
                   {...register('lastName', {
                     required: 'Last name is required',
@@ -185,15 +187,16 @@ const LeadForm = () => {
                     <Mail className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    id="email"
+                    id="lead-email"
                     type="email"
+                    autoComplete="email"
                     className={`input pl-10 ${errors.email ? 'input-error' : ''}`}
                     placeholder="Enter email address"
                     {...register('email', {
                       required: 'Email is required',
                       pattern: {
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: 'Invalid email address'
+                        message: 'Please enter a valid email'
                       }
                     })}
                   />
