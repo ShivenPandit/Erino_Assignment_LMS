@@ -64,11 +64,6 @@ export const AuthProvider = ({ children }) => {
 
       if (response.data.success) {
         setUser(response.data.data.user);
-        // Store session ID for cross-domain authentication
-        if (response.data.data.sessionId) {
-          localStorage.setItem('sessionId', response.data.data.sessionId);
-          console.log('Session ID stored for cross-domain use');
-        }
         console.log('Login successful, user set:', response.data.data.user);
         toast.success('Login successful!');
         return { success: true };
@@ -92,11 +87,6 @@ export const AuthProvider = ({ children }) => {
 
       if (response.data.success) {
         setUser(response.data.data.user);
-        // Store session ID for cross-domain authentication
-        if (response.data.data.sessionId) {
-          localStorage.setItem('sessionId', response.data.data.sessionId);
-          console.log('Session ID stored for cross-domain use');
-        }
         toast.success('Registration successful!');
         return { success: true };
       }
@@ -111,14 +101,11 @@ export const AuthProvider = ({ children }) => {
     try {
       await api.post('/api/auth/logout');
       setUser(null);
-      // Clear session ID from localStorage
-      localStorage.removeItem('sessionId');
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
       // Still clear user state even if logout request fails
       setUser(null);
-      localStorage.removeItem('sessionId');
     }
   };
 

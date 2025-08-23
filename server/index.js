@@ -27,14 +27,9 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// CORS configuration for cross-domain cookies
+// CORS configuration for Vercel proxy approach
 app.use(cors({
-  origin: [
-    'http://localhost:3000', // Local development
-    'https://erino-assignment-lms.vercel.app', // Your Vercel domain
-    'https://lead-management-frontend.vercel.app', // Add your actual frontend domain
-    process.env.FRONTEND_URL
-  ].filter(Boolean), // Remove undefined values
+  origin: true, // Allow all origins since Vercel proxy makes requests same-origin
   credentials: true, // This is crucial for cookies
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Cookie'],
@@ -120,23 +115,6 @@ app.use('*', (req, res) => {
 // Error handling middleware
 app.use(errorHandler);
 
-// Cleanup expired sessions every hour
-const cleanupSessions = () => {
-  if (global.sessions) {
-    const now = new Date();
-    let cleaned = 0;
-    for (const [sessionId, session] of global.sessions.entries()) {
-      if (now > session.expiresAt) {
-        global.sessions.delete(sessionId);
-        cleaned++;
-      }
-    }
-    if (cleaned > 0) {
-      console.log(`🧹 Cleaned up ${cleaned} expired sessions`);
-    }
-  }
-};
-
 // Start server
 const startServer = async () => {
   try {
@@ -147,9 +125,6 @@ const startServer = async () => {
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
       console.log(`🔐 Auth API: http://localhost:${PORT}/api/auth`);
       console.log(`📋 Leads API: http://localhost:${PORT}/api/leads`);
-      
-      // Start session cleanup
-      setInterval(cleanupSessions, 60 * 60 * 1000); // Every hour
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
