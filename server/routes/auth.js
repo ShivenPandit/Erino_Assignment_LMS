@@ -62,19 +62,19 @@ router.post('/register', [
     // Generate JWT token
     const token = user.generateAuthToken();
 
-    // Set httpOnly cookie
+    // Set httpOnly cookie with cross-domain support
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: true, // Always secure for cross-domain
+      sameSite: 'none', // Required for cross-domain
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: '/'
     });
 
     console.log('Cookie set with options:', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: true,
+      sameSite: 'none',
       path: '/'
     });
     console.log('Token length:', token.length);
@@ -162,19 +162,19 @@ router.post('/login', [
     // Generate JWT token
     const token = user.generateAuthToken();
 
-    // Set httpOnly cookie
+    // Set httpOnly cookie with cross-domain support
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: true, // Always secure for cross-domain
+      sameSite: 'none', // Required for cross-domain
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: '/'
     });
 
     console.log('Cookie set with options:', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: true,
+      sameSite: 'none',
       path: '/'
     });
     console.log('Token length:', token.length);
@@ -212,8 +212,8 @@ router.post('/logout', (req, res) => {
     // Clear the token cookie
     res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: true, // Always secure for cross-domain
+      sameSite: 'none', // Required for cross-domain
       path: '/'
     });
 

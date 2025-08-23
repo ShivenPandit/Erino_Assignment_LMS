@@ -27,7 +27,7 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// CORS configuration
+// CORS configuration for cross-domain cookies
 app.use(cors({
   origin: [
     'http://localhost:3000', // Local development
@@ -35,7 +35,7 @@ app.use(cors({
     'https://lead-management-frontend.vercel.app', // Add your actual frontend domain
     process.env.FRONTEND_URL
   ].filter(Boolean), // Remove undefined values
-  credentials: true,
+  credentials: true, // This is crucial for cookies
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Cookie'],
   exposedHeaders: ['Set-Cookie'],
