@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://lead-management-backend-9p2q.onrender.com/api/:path*"
-    }
-  ]
-}

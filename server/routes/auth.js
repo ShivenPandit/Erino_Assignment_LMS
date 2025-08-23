@@ -59,20 +59,30 @@ router.post('/register', [
       password
     });
 
-    // Generate JWT token
-    const token = user.generateAuthToken();
-
-    // Set JWT token in HttpOnly cookie
-    res.cookie('token', token, {
+    // Create session ID for cross-domain compatibility
+    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Store session data in memory (in production, use Redis or database)
+    if (!global.sessions) global.sessions = new Map();
+    global.sessions.set(sessionId, {
+      userId: user._id,
+      email: user.email,
+      role: user.role,
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    });
+    
+    // Try to set cookie (may not work cross-domain)
+    res.cookie('sessionId', sessionId, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // true in production, false in dev
-      sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax', // lax since Vercel proxy makes it same-site
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: '/'
     });
 
-    console.log('JWT token generated and set in cookie');
-    console.log('Token length:', token.length);
+    console.log('Session created with ID:', sessionId);
+    console.log('Session ID length:', sessionId.length);
 
     res.status(201).json({
       success: true,
@@ -84,7 +94,8 @@ router.post('/register', [
           lastName: user.lastName,
           email: user.email,
           role: user.role
-        }
+        },
+        sessionId: sessionId // Include session ID in response for cross-domain use
       }
     });
   } catch (error) {
@@ -153,20 +164,30 @@ router.post('/login', [
     user.lastLogin = new Date();
     await user.save();
 
-    // Generate JWT token
-    const token = user.generateAuthToken();
-
-    // Set JWT token in HttpOnly cookie
-    res.cookie('token', token, {
+    // Create session ID for cross-domain compatibility
+    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Store session data in memory (in production, use Redis or database)
+    if (!global.sessions) global.sessions = new Map();
+    global.sessions.set(sessionId, {
+      userId: user._id,
+      email: user.email,
+      role: user.role,
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    });
+    
+    // Try to set cookie (may not work cross-domain)
+    res.cookie('sessionId', sessionId, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // true in production, false in dev
-      sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax', // lax since Vercel proxy makes it same-site
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: '/'
     });
 
-    console.log('JWT token generated and set in cookie');
-    console.log('Token length:', token.length);
+    console.log('Session created with ID:', sessionId);
+    console.log('Session ID length:', sessionId.length);
 
     res.status(200).json({
       success: true,
@@ -179,7 +200,8 @@ router.post('/login', [
           email: user.email,
           role: user.role,
           lastLogin: user.lastLogin
-        }
+        },
+        sessionId: sessionId // Include session ID in response for cross-domain use
       }
     });
   } catch (error) {
@@ -197,13 +219,18 @@ router.post('/login', [
 // @access  Private
 router.post('/logout', (req, res) => {
   try {
-    // Clear the JWT token cookie
-    res.clearCookie('token', {
+    // Clear the session cookie
+    res.clearCookie('sessionId', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // true in production, false in dev
-      sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax', // lax since Vercel proxy makes it same-site
+      secure: true,
+      sameSite: 'none',
       path: '/'
     });
+    
+    // Remove session from memory
+    if (req.cookies && req.cookies.sessionId && global.sessions) {
+      global.sessions.delete(req.cookies.sessionId);
+    }
 
     res.status(200).json({
       success: true,
