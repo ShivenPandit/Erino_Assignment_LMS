@@ -191,8 +191,9 @@ const Settings = () => {
               <form onSubmit={handleProfileSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                    <label htmlFor="profile-first-name" className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                     <input
+                      id="profile-first-name"
                       type="text"
                       value={profileForm.firstName}
                       onChange={(e) => setProfileForm(prev => ({ ...prev, firstName: e.target.value }))}
@@ -201,8 +202,9 @@ const Settings = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                    <label htmlFor="profile-last-name" className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                     <input
+                      id="profile-last-name"
                       type="text"
                       value={profileForm.lastName}
                       onChange={(e) => setProfileForm(prev => ({ ...prev, lastName: e.target.value }))}
@@ -213,8 +215,9 @@ const Settings = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <label htmlFor="profile-email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                     <input
+                      id="profile-email"
                       type="email"
                       value={profileForm.email}
                       onChange={(e) => setProfileForm(prev => ({ ...prev, email: e.target.value }))}
@@ -223,8 +226,9 @@ const Settings = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    <label htmlFor="profile-phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                     <input
+                      id="profile-phone"
                       type="tel"
                       value={profileForm.phone}
                       onChange={(e) => setProfileForm(prev => ({ ...prev, phone: e.target.value }))}
@@ -258,9 +262,10 @@ const Settings = () => {
               <div className="card-body">
                 <form onSubmit={handlePasswordSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                    <label htmlFor="current-password" className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
                     <div className="relative">
                       <input
+                        id="current-password"
                         type={showPasswords.current ? 'text' : 'password'}
                         value={passwordForm.currentPassword}
                         onChange={(e) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
@@ -278,9 +283,10 @@ const Settings = () => {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                      <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
                       <div className="relative">
                         <input
+                          id="new-password"
                           type={showPasswords.new ? 'text' : 'password'}
                           value={passwordForm.newPassword}
                           onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}

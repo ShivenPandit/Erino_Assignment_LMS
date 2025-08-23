@@ -133,6 +133,8 @@ const Layout = ({ children }) => {
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
+                id="search-leads"
+                name="search-leads"
                 type="text"
                 className="block h-full w-full border-0 py-0 pl-10 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
                 placeholder="Search leads..."

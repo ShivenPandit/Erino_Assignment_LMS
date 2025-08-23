@@ -421,8 +421,9 @@ const LeadsList = () => {
         <div className="card-body">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label htmlFor="search-leads" className="block text-sm font-medium text-gray-700 mb-1">Search</label>
               <input
+                id="search-leads"
                 type="text"
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
@@ -431,8 +432,9 @@ const LeadsList = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700 mb-1">Status</label>
               <select
+                id="status-filter"
                 value={filters.status}
                 onChange={(e) => handleFilterChange('status', e.target.value)}
                 className="form-select w-full"
@@ -446,8 +448,9 @@ const LeadsList = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Source</label>
+              <label htmlFor="source-filter" className="block text-sm font-medium text-gray-700 mb-1">Source</label>
               <select
+                id="source-filter"
                 value={filters.source}
                 onChange={(e) => handleFilterChange('source', e.target.value)}
                 className="form-select w-full"
@@ -462,8 +465,9 @@ const LeadsList = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Qualified</label>
+              <label htmlFor="qualified-filter" className="block text-sm font-medium text-gray-700 mb-1">Qualified</label>
               <select
+                id="qualified-filter"
                 value={filters.isQualified}
                 onChange={(e) => handleFilterChange('isQualified', e.target.value)}
                 className="form-select w-full"
@@ -476,8 +480,9 @@ const LeadsList = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Min Score</label>
+              <label htmlFor="min-score" className="block text-sm font-medium text-gray-700 mb-1">Min Score</label>
               <input
+                id="min-score"
                 type="number"
                 value={filters.minScore}
                 onChange={(e) => handleFilterChange('minScore', e.target.value)}
@@ -488,8 +493,9 @@ const LeadsList = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Max Score</label>
+              <label htmlFor="max-score" className="block text-sm font-medium text-gray-700 mb-1">Max Score</label>
               <input
+                id="max-score"
                 type="number"
                 value={filters.maxScore}
                 onChange={(e) => handleFilterChange('maxScore', e.target.value)}
@@ -500,8 +506,9 @@ const LeadsList = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Min Value</label>
+              <label htmlFor="min-value" className="block text-sm font-medium text-gray-700 mb-1">Min Value</label>
               <input
+                id="min-value"
                 type="number"
                 value={filters.minValue}
                 onChange={(e) => handleFilterChange('minValue', e.target.value)}
@@ -512,12 +519,13 @@ const LeadsList = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Max Value</label>
+              <label htmlFor="max-value" className="block text-sm font-medium text-gray-700 mb-1">Max Value</label>
               <input
+                id="max-value"
                 type="number"
                 value={filters.maxValue}
                 onChange={(e) => handleFilterChange('maxValue', e.target.value)}
-                placeholder="10000"
+                placeholder="0"
                 min="0"
                 step="0.01"
                 className="form-input w-full"
@@ -526,8 +534,9 @@ const LeadsList = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date From</label>
+              <label htmlFor="date-from" className="block text-sm font-medium text-gray-700 mb-1">Date From</label>
               <input
+                id="date-from"
                 type="date"
                 value={filters.dateFrom}
                 onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
@@ -535,8 +544,9 @@ const LeadsList = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date To</label>
+              <label htmlFor="date-to" className="block text-sm font-medium text-gray-700 mb-1">Date To</label>
               <input
+                id="date-to"
                 type="date"
                 value={filters.dateTo}
                 onChange={(e) => handleFilterChange('dateTo', e.target.value)}
