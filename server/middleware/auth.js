@@ -5,14 +5,9 @@ const protect = async (req, res, next) => {
   try {
     let token;
 
-    // Check for token in httpOnly cookie
+    // Check for token in httpOnly cookie only
     if (req.cookies && req.cookies.token) {
       token = req.cookies.token;
-    }
-
-    // Check for token in Authorization header (fallback)
-    if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
     }
 
     if (!token) {
@@ -68,10 +63,6 @@ const optionalAuth = async (req, res, next) => {
 
     if (req.cookies && req.cookies.token) {
       token = req.cookies.token;
-    }
-
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
     }
 
     if (token) {

@@ -80,8 +80,7 @@ router.post('/register', [
           lastName: user.lastName,
           email: user.email,
           role: user.role
-        },
-        token
+        }
       }
     });
   } catch (error) {
@@ -172,8 +171,7 @@ router.post('/login', [
           email: user.email,
           role: user.role,
           lastLogin: user.lastLogin
-        },
-        token
+        }
       }
     });
   } catch (error) {

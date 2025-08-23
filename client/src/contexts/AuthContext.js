@@ -16,9 +16,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Configure axios defaults
-  // Note: withCredentials is now handled in the centralized api instance
-
   // Check if user is authenticated on app load
   useEffect(() => {
     checkAuthStatus();
@@ -26,24 +23,15 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      // Check if we have a stored token
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
+      // Check authentication status using cookies
       const response = await api.get('/api/auth/me');
       if (response.data.success) {
         setUser(response.data.data.user);
-      } else {
-        // Clear invalid token
-        localStorage.removeItem('authToken');
       }
     } catch (error) {
       // User is not authenticated or token is invalid
       console.log('User not authenticated or token invalid');
-      localStorage.removeItem('authToken');
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -58,10 +46,7 @@ export const AuthProvider = ({ children }) => {
 
       if (response.data.success) {
         setUser(response.data.data.user);
-        // Store token in localStorage for axios interceptor
-        if (response.data.data.token) {
-          localStorage.setItem('authToken', response.data.data.token);
-        }
+        // Token is automatically stored in HttpOnly cookie by the server
         toast.success('Login successful!');
         return { success: true };
       }
@@ -78,10 +63,7 @@ export const AuthProvider = ({ children }) => {
 
       if (response.data.success) {
         setUser(response.data.data.user);
-        // Store token in localStorage for axios interceptor
-        if (response.data.data.token) {
-          localStorage.setItem('authToken', response.data.data.token);
-        }
+        // Token is automatically stored in HttpOnly cookie by the server
         toast.success('Registration successful!');
         return { success: true };
       }
@@ -96,14 +78,12 @@ export const AuthProvider = ({ children }) => {
     try {
       await api.post('/api/auth/logout');
       setUser(null);
-      // Clear token from localStorage
-      localStorage.removeItem('authToken');
+      // Token is automatically cleared from HttpOnly cookie by the server
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
-      // Still clear user state and token even if logout request fails
+      // Still clear user state even if logout request fails
       setUser(null);
-      localStorage.removeItem('authToken');
     }
   };
 

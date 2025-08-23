@@ -7,20 +7,7 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// Request interceptor to add auth headers if needed
-api.interceptors.request.use(
-  (config) => {
-    // Add authorization header if token exists in localStorage
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// No request interceptor needed - cookies are automatically sent with withCredentials: true
 
 // Response interceptor to handle common errors
 api.interceptors.response.use(
@@ -31,7 +18,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Handle unauthorized access
       console.log('Unauthorized access, redirecting to login');
-      localStorage.removeItem('authToken');
+      // No need to clear localStorage since we're using cookies
       // You can add redirect logic here if needed
     }
     return Promise.reject(error);
