@@ -67,6 +67,7 @@ The **Lead Management System** is a comprehensive web application designed to he
 
 2. **Install dependencies**
    ```bash
+   npm install
    # Install backend dependencies
    cd server
    npm install
