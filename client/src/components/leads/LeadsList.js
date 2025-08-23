@@ -144,23 +144,33 @@ const LeadsList = () => {
       ? 'https://lead-management-backend-9p2q.onrender.com'
       : (process.env.REACT_APP_API_URL || 'http://localhost:5000'));
     
-    if (user && !authLoading) {
-      console.log('User authenticated, fetching leads...');
-      
-      // Test API connection first
-      api.get('/health')
-        .then(response => {
-          console.log('API health check successful:', response.data);
-          fetchLeads();
-        })
-        .catch(error => {
-          console.error('API health check failed:', error);
-          toast.error('Cannot connect to server. Please check if the server is running.');
-        });
-    } else if (!user && !authLoading) {
+    // Don't do anything while authentication is loading
+    if (authLoading) {
+      console.log('Authentication loading, waiting...');
+      return;
+    }
+    
+    // If user is not authenticated, redirect to login
+    if (!user) {
       console.log('User not authenticated, redirecting to login...');
       navigate('/login');
+      return;
     }
+    
+    // User is authenticated, fetch leads
+    console.log('User authenticated, fetching leads...');
+    console.log('User details:', user);
+    
+    // Test API connection first
+    api.get('/health')
+      .then(response => {
+        console.log('API health check successful:', response.data);
+        fetchLeads();
+      })
+      .catch(error => {
+        console.error('API health check failed:', error);
+        toast.error('Cannot connect to server. Please check if the server is running.');
+      });
   }, [user, authLoading, fetchLeads, navigate]);
 
   // Handle filter changes

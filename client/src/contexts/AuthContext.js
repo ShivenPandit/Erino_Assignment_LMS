@@ -24,6 +24,8 @@ export const AuthProvider = ({ children }) => {
   const checkAuthStatus = async () => {
     try {
       console.log('Checking authentication status...');
+      console.log('Current cookies:', document.cookie);
+      
       // Check authentication status using cookies
       const response = await api.get('/api/auth/me');
       console.log('Auth check response:', response.data);
