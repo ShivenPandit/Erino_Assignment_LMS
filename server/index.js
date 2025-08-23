@@ -46,6 +46,21 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'Lead Management System API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      auth: '/api/auth',
+      leads: '/api/leads'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/leads', leadRoutes);
@@ -65,7 +80,7 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
       console.log(`🔐 Auth API: http://localhost:${PORT}/api/auth`);
