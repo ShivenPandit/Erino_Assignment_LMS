@@ -13,6 +13,9 @@ const { errorHandler } = require('./middleware/errorHandler');
 const app = express();
 const PORT = process.env.PORT || 10000;
 
+// Trust proxy configuration for Railway deployment
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 
@@ -26,7 +29,11 @@ app.use('/api/', limiter);
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000', // Local development
+    'https://your-vercel-domain.vercel.app', // Your Vercel domain
+    process.env.FRONTEND_URL
+  ].filter(Boolean), // Remove undefined values
   credentials: true
 }));
 
