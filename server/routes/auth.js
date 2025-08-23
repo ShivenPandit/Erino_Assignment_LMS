@@ -87,7 +87,7 @@ router.post('/register', [
       sameSite: 'none',
       path: '/'
     });
-    console.log('Token length:', token.length);
+    console.log('Session ID length:', sessionId.length);
     console.log('Response headers:', res.getHeaders());
 
     res.status(201).json({
@@ -197,7 +197,7 @@ router.post('/login', [
       sameSite: 'none',
       path: '/'
     });
-    console.log('Token length:', token.length);
+    console.log('Session ID length:', sessionId.length);
     console.log('Response headers:', res.getHeaders());
 
     res.status(200).json({
