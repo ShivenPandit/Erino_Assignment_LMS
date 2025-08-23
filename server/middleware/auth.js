@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const protect = async (req, res, next) => {
@@ -84,26 +83,30 @@ const protect = async (req, res, next) => {
   }
 };
 
-// Optional authentication - doesn't fail if no token
+// Optional authentication - doesn't fail if no session
 const optionalAuth = async (req, res, next) => {
   try {
-    let token;
+    let sessionId;
 
-    if (req.cookies && req.cookies.token) {
-      token = req.cookies.token;
+    if (req.cookies && req.cookies.sessionId) {
+      sessionId = req.cookies.sessionId;
     }
 
-    if (token) {
+    if (sessionId) {
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id).select('-password');
+        // Get session data from memory
+        const session = global.sessions && global.sessions.get(sessionId);
         
-        if (user && user.isActive) {
-          req.user = user;
+        if (session && new Date() <= session.expiresAt) {
+          const user = await User.findById(session.userId).select('-password');
+          
+          if (user && user.isActive) {
+            req.user = user;
+          }
         }
       } catch (error) {
-        // Token is invalid, but we don't fail the request
-        console.log('Invalid token in optional auth:', error.message);
+        // Session is invalid, but we don't fail the request
+        console.log('Invalid session in optional auth:', error.message);
       }
     }
 
