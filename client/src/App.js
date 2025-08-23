@@ -9,7 +9,6 @@ import LeadForm from './components/leads/LeadForm';
 import LeadDetail from './components/leads/LeadDetail';
 import Settings from './components/settings/Settings';
 import Layout from './components/layout/Layout';
-import './index.css';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
