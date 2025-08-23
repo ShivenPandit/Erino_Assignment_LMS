@@ -4,13 +4,19 @@ const protect = async (req, res, next) => {
   try {
     let sessionId;
 
-    // Check for session ID in httpOnly cookie
+    // Check for session ID in httpOnly cookie (local development)
     if (req.cookies && req.cookies.sessionId) {
       sessionId = req.cookies.sessionId;
       console.log('Session ID found in cookies:', !!sessionId);
+    } 
+    // Check for session ID in Authorization header (cross-domain)
+    else if (req.headers.authorization && req.headers.authorization.startsWith('Session ')) {
+      sessionId = req.headers.authorization.split(' ')[1];
+      console.log('Session ID found in Authorization header:', !!sessionId);
     } else {
-      console.log('No session ID found in cookies');
+      console.log('No session ID found in cookies or Authorization header');
       console.log('Available cookies:', Object.keys(req.cookies || {}));
+      console.log('Authorization header:', req.headers.authorization);
     }
 
     if (!sessionId) {

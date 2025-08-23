@@ -9,7 +9,20 @@ const api = axios.create({
   timeout: 30000, // Increased timeout for production
 });
 
-// No request interceptor needed - cookies are automatically sent with withCredentials: true
+// Request interceptor to add session ID for cross-domain authentication
+api.interceptors.request.use(
+  (config) => {
+    // Add session ID to Authorization header for cross-domain requests
+    const sessionId = localStorage.getItem('sessionId');
+    if (sessionId) {
+      config.headers.Authorization = `Session ${sessionId}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Response interceptor to handle common errors
 api.interceptors.response.use(

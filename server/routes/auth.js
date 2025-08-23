@@ -59,7 +59,7 @@ router.post('/register', [
       password
     });
 
-    // Set session cookie for cross-domain compatibility
+    // Create session ID for cross-domain compatibility
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     // Store session data in memory (in production, use Redis or database)
@@ -72,7 +72,7 @@ router.post('/register', [
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
     });
     
-    // Set session cookie
+    // Try to set cookie (may not work cross-domain)
     res.cookie('sessionId', sessionId, {
       httpOnly: true,
       secure: true,
@@ -81,14 +81,8 @@ router.post('/register', [
       path: '/'
     });
 
-    console.log('Session cookie set with options:', {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      path: '/'
-    });
+    console.log('Session created with ID:', sessionId);
     console.log('Session ID length:', sessionId.length);
-    console.log('Response headers:', res.getHeaders());
 
     res.status(201).json({
       success: true,
@@ -100,7 +94,8 @@ router.post('/register', [
           lastName: user.lastName,
           email: user.email,
           role: user.role
-        }
+        },
+        sessionId: sessionId // Include session ID in response for cross-domain use
       }
     });
   } catch (error) {
@@ -169,7 +164,7 @@ router.post('/login', [
     user.lastLogin = new Date();
     await user.save();
 
-    // Set session cookie for cross-domain compatibility
+    // Create session ID for cross-domain compatibility
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     // Store session data in memory (in production, use Redis or database)
@@ -182,7 +177,7 @@ router.post('/login', [
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
     });
     
-    // Set session cookie
+    // Try to set cookie (may not work cross-domain)
     res.cookie('sessionId', sessionId, {
       httpOnly: true,
       secure: true,
@@ -191,14 +186,8 @@ router.post('/login', [
       path: '/'
     });
 
-    console.log('Session cookie set with options:', {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      path: '/'
-    });
+    console.log('Session created with ID:', sessionId);
     console.log('Session ID length:', sessionId.length);
-    console.log('Response headers:', res.getHeaders());
 
     res.status(200).json({
       success: true,
@@ -211,7 +200,8 @@ router.post('/login', [
           email: user.email,
           role: user.role,
           lastLogin: user.lastLogin
-        }
+        },
+        sessionId: sessionId // Include session ID in response for cross-domain use
       }
     });
   } catch (error) {
