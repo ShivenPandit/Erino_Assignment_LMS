@@ -59,19 +59,29 @@ router.post('/register', [
       password
     });
 
-    // Generate JWT token
-    const token = user.generateAuthToken();
-
-    // Set httpOnly cookie with cross-domain support
-    res.cookie('token', token, {
+    // Set session cookie for cross-domain compatibility
+    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Store session data in memory (in production, use Redis or database)
+    if (!global.sessions) global.sessions = new Map();
+    global.sessions.set(sessionId, {
+      userId: user._id,
+      email: user.email,
+      role: user.role,
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    });
+    
+    // Set session cookie
+    res.cookie('sessionId', sessionId, {
       httpOnly: true,
-      secure: true, // Always secure for cross-domain
-      sameSite: 'none', // Required for cross-domain
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: '/'
     });
 
-    console.log('Cookie set with options:', {
+    console.log('Session cookie set with options:', {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
@@ -159,19 +169,29 @@ router.post('/login', [
     user.lastLogin = new Date();
     await user.save();
 
-    // Generate JWT token
-    const token = user.generateAuthToken();
-
-    // Set httpOnly cookie with cross-domain support
-    res.cookie('token', token, {
+    // Set session cookie for cross-domain compatibility
+    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Store session data in memory (in production, use Redis or database)
+    if (!global.sessions) global.sessions = new Map();
+    global.sessions.set(sessionId, {
+      userId: user._id,
+      email: user.email,
+      role: user.role,
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    });
+    
+    // Set session cookie
+    res.cookie('sessionId', sessionId, {
       httpOnly: true,
-      secure: true, // Always secure for cross-domain
-      sameSite: 'none', // Required for cross-domain
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: '/'
     });
 
-    console.log('Cookie set with options:', {
+    console.log('Session cookie set with options:', {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
@@ -209,13 +229,18 @@ router.post('/login', [
 // @access  Private
 router.post('/logout', (req, res) => {
   try {
-    // Clear the token cookie
-    res.clearCookie('token', {
+    // Clear the session cookie
+    res.clearCookie('sessionId', {
       httpOnly: true,
-      secure: true, // Always secure for cross-domain
-      sameSite: 'none', // Required for cross-domain
+      secure: true,
+      sameSite: 'none',
       path: '/'
     });
+    
+    // Remove session from memory
+    if (req.cookies && req.cookies.sessionId && global.sessions) {
+      global.sessions.delete(req.cookies.sessionId);
+    }
 
     res.status(200).json({
       success: true,

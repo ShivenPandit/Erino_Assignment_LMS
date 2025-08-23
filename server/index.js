@@ -120,6 +120,23 @@ app.use('*', (req, res) => {
 // Error handling middleware
 app.use(errorHandler);
 
+// Cleanup expired sessions every hour
+const cleanupSessions = () => {
+  if (global.sessions) {
+    const now = new Date();
+    let cleaned = 0;
+    for (const [sessionId, session] of global.sessions.entries()) {
+      if (now > session.expiresAt) {
+        global.sessions.delete(sessionId);
+        cleaned++;
+      }
+    }
+    if (cleaned > 0) {
+      console.log(`🧹 Cleaned up ${cleaned} expired sessions`);
+    }
+  }
+};
+
 // Start server
 const startServer = async () => {
   try {
@@ -130,6 +147,9 @@ const startServer = async () => {
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
       console.log(`🔐 Auth API: http://localhost:${PORT}/api/auth`);
       console.log(`📋 Leads API: http://localhost:${PORT}/api/leads`);
+      
+      // Start session cleanup
+      setInterval(cleanupSessions, 60 * 60 * 1000); // Every hour
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

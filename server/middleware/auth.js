@@ -3,58 +3,75 @@ const User = require('../models/User');
 
 const protect = async (req, res, next) => {
   try {
-    let token;
+    let sessionId;
 
-    // Check for token in httpOnly cookie only
-    if (req.cookies && req.cookies.token) {
-      token = req.cookies.token;
-      console.log('Token found in cookies:', !!token);
+    // Check for session ID in httpOnly cookie
+    if (req.cookies && req.cookies.sessionId) {
+      sessionId = req.cookies.sessionId;
+      console.log('Session ID found in cookies:', !!sessionId);
     } else {
-      console.log('No token found in cookies');
+      console.log('No session ID found in cookies');
       console.log('Available cookies:', Object.keys(req.cookies || {}));
     }
 
-    if (!token) {
-      console.log('No token provided, returning 401');
+    if (!sessionId) {
+      console.log('No session ID provided, returning 401');
       return res.status(401).json({
         success: false,
-        message: 'Access denied. No token provided.'
+        message: 'Access denied. No session ID provided.'
       });
     }
 
     try {
-      // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log('Token verified successfully for user:', decoded.id);
+      // Get session data from memory
+      const session = global.sessions && global.sessions.get(sessionId);
       
-      // Get user from token
-      const user = await User.findById(decoded.id).select('-password');
-      
-      if (!user) {
-        console.log('User not found for token:', decoded.id);
+      if (!session) {
+        console.log('Session not found or expired:', sessionId);
         return res.status(401).json({
           success: false,
-          message: 'Token is valid but user not found.'
+          message: 'Session not found or expired.'
+        });
+      }
+
+      // Check if session is expired
+      if (new Date() > session.expiresAt) {
+        console.log('Session expired:', sessionId);
+        global.sessions.delete(sessionId);
+        return res.status(401).json({
+          success: false,
+          message: 'Session expired.'
+        });
+      }
+
+      // Get user from session
+      const user = await User.findById(session.userId).select('-password');
+      
+      if (!user) {
+        console.log('User not found for session:', session.userId);
+        return res.status(401).json({
+          success: false,
+          message: 'User not found for this session.'
         });
       }
 
       if (!user.isActive) {
-        console.log('User account deactivated:', decoded.id);
+        console.log('User account deactivated:', session.userId);
         return res.status(401).json({
           success: false,
           message: 'User account is deactivated.'
         });
       }
 
-      console.log('User authenticated successfully:', user.email);
+      console.log('User authenticated successfully via session:', user.email);
       // Add user to request object
       req.user = user;
       next();
     } catch (error) {
-      console.log('Token verification failed:', error.message);
+      console.log('Session verification failed:', error.message);
       return res.status(401).json({
         success: false,
-        message: 'Invalid token.'
+        message: 'Invalid session.'
       });
     }
   } catch (error) {
