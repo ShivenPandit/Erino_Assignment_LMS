@@ -140,7 +140,9 @@ const LeadsList = () => {
   // Initial fetch - only if user is authenticated
   useEffect(() => {
     console.log('Auth state:', { user, authLoading, isAuthenticated: !!user });
-    console.log('API base URL:', process.env.REACT_APP_API_URL || 'http://localhost:5000');
+    console.log('API base URL:', process.env.NODE_ENV === 'production' 
+      ? 'https://lead-management-backend-9p2q.onrender.com'
+      : (process.env.REACT_APP_API_URL || 'http://localhost:5000'));
     
     if (user && !authLoading) {
       console.log('User authenticated, fetching leads...');

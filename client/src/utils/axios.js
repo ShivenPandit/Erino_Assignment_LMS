@@ -2,9 +2,11 @@ import axios from 'axios';
 
 // Create axios instance with default configuration
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+  baseURL: process.env.NODE_ENV === 'production' 
+    ? 'https://lead-management-backend-9p2q.onrender.com'
+    : (process.env.REACT_APP_API_URL || 'http://localhost:5000'),
   withCredentials: true, // This ensures cookies are sent with every request
-  timeout: 10000,
+  timeout: 30000, // Increased timeout for production
 });
 
 // No request interceptor needed - cookies are automatically sent with withCredentials: true
