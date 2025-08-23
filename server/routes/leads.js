@@ -173,6 +173,10 @@ router.get('/', protect, [
     .withMessage('Sort order must be asc or desc')
 ], async (req, res) => {
   try {
+    console.log('Leads request received from user:', req.user?.email);
+    console.log('Request cookies:', Object.keys(req.cookies || {}));
+    console.log('Request query params:', req.query);
+    
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

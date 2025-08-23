@@ -23,14 +23,26 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
+      console.log('Checking authentication status...');
       // Check authentication status using cookies
       const response = await api.get('/api/auth/me');
+      console.log('Auth check response:', response.data);
+      
       if (response.data.success) {
+        console.log('User authenticated:', response.data.data.user);
         setUser(response.data.data.user);
+      } else {
+        console.log('Auth check failed:', response.data);
+        setUser(null);
       }
     } catch (error) {
       // User is not authenticated or token is invalid
-      console.log('User not authenticated or token invalid');
+      console.log('User not authenticated or token invalid:', error);
+      console.log('Error details:', {
+        status: error.response?.status,
+        message: error.response?.data?.message,
+        data: error.response?.data
+      });
       setUser(null);
     } finally {
       setLoading(false);
@@ -39,18 +51,29 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      console.log('Attempting login for:', email);
       const response = await api.post('/api/auth/login', {
         email,
         password
       });
 
+      console.log('Login response:', response.data);
+      console.log('Cookies after login:', document.cookie);
+
       if (response.data.success) {
         setUser(response.data.data.user);
         // Token is automatically stored in HttpOnly cookie by the server
+        console.log('Login successful, user set:', response.data.data.user);
         toast.success('Login successful!');
         return { success: true };
       }
     } catch (error) {
+      console.error('Login error:', error);
+      console.log('Login error details:', {
+        status: error.response?.status,
+        message: error.response?.data?.message,
+        data: error.response?.data
+      });
       const message = error.response?.data?.message || 'Login failed';
       toast.error(message);
       return { success: false, message };

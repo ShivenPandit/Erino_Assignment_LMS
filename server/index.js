@@ -52,10 +52,16 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
+  console.log('Health check request received');
+  console.log('Request cookies:', Object.keys(req.cookies || {}));
+  console.log('Request headers:', req.headers);
+  
   res.status(200).json({ 
     status: 'OK', 
     message: 'Lead Management System API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    cookies: Object.keys(req.cookies || {}),
+    userAgent: req.headers['user-agent']
   });
 });
 
@@ -77,6 +83,20 @@ app.get('/', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/leads', leadRoutes);
+
+// Test authentication endpoint
+app.get('/test-auth', (req, res) => {
+  console.log('Test auth request received');
+  console.log('Request cookies:', Object.keys(req.cookies || {}));
+  console.log('Request headers:', req.headers);
+  
+  res.status(200).json({
+    message: 'Test auth endpoint',
+    cookies: Object.keys(req.cookies || {}),
+    hasToken: !!(req.cookies && req.cookies.token),
+    timestamp: new Date().toISOString()
+  });
+});
 
 // 404 handler
 app.use('*', (req, res) => {

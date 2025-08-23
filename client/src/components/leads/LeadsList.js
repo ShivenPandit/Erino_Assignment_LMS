@@ -79,6 +79,7 @@ const LeadsList = () => {
       });
 
       console.log('Fetching leads with params:', params.toString());
+      console.log('API URL:', `/api/leads?${params}`);
       
       const response = await api.get(`/api/leads?${params}`);
       
@@ -96,23 +97,69 @@ const LeadsList = () => {
       }
     } catch (error) {
       console.error('Error fetching leads:', error);
-      console.error('Error details:', {
-        status: error.response?.status,
-        message: error.response?.data?.message,
-        data: error.response?.data
-      });
-      toast.error('Failed to fetch leads');
+      
+      // More detailed error logging
+      if (error.response) {
+        // Server responded with error status
+        console.error('Error details:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          message: error.response.data?.message,
+          data: error.response.data,
+          headers: error.response.headers
+        });
+        
+        if (error.response.status === 401) {
+          toast.error('Authentication failed. Please log in again.');
+          // Redirect to login if unauthorized
+          navigate('/login');
+          return;
+        } else if (error.response.status === 403) {
+          toast.error('Access denied. Insufficient permissions.');
+        } else if (error.response.status === 404) {
+          toast.error('Leads endpoint not found.');
+        } else if (error.response.status >= 500) {
+          toast.error('Server error. Please try again later.');
+        } else {
+          toast.error(error.response.data?.message || 'Failed to fetch leads');
+        }
+      } else if (error.request) {
+        // Request was made but no response received
+        console.error('Network error - no response received:', error.request);
+        toast.error('Network error. Please check your connection.');
+      } else {
+        // Something else happened
+        console.error('Unexpected error:', error.message);
+        toast.error('An unexpected error occurred.');
+      }
     } finally {
       setLoading(false);
     }
-  }, [filters, pagination.itemsPerPage, user]);
+  }, [filters, pagination.itemsPerPage, user, navigate]);
 
   // Initial fetch - only if user is authenticated
   useEffect(() => {
+    console.log('Auth state:', { user, authLoading, isAuthenticated: !!user });
+    console.log('API base URL:', process.env.REACT_APP_API_URL || 'http://localhost:5000');
+    
     if (user && !authLoading) {
-      fetchLeads();
+      console.log('User authenticated, fetching leads...');
+      
+      // Test API connection first
+      api.get('/health')
+        .then(response => {
+          console.log('API health check successful:', response.data);
+          fetchLeads();
+        })
+        .catch(error => {
+          console.error('API health check failed:', error);
+          toast.error('Cannot connect to server. Please check if the server is running.');
+        });
+    } else if (!user && !authLoading) {
+      console.log('User not authenticated, redirecting to login...');
+      navigate('/login');
     }
-  }, [user, authLoading, fetchLeads]);
+  }, [user, authLoading, fetchLeads, navigate]);
 
   // Handle filter changes
   const handleFilterChange = (key, value) => {
