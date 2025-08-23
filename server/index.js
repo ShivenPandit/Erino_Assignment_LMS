@@ -31,11 +31,17 @@ app.use('/api/', limiter);
 app.use(cors({
   origin: [
     'http://localhost:3000', // Local development
-    'https://your-vercel-domain.vercel.app', // Your Vercel domain
+    'https://erino-assignment-lms.vercel.app', // Your Vercel domain
     process.env.FRONTEND_URL
   ].filter(Boolean), // Remove undefined values
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 204
 }));
+
+// Handle CORS preflight for all routes
+app.options('*', cors());
 
 // Cookie parsing middleware
 app.use(cookieParser());
