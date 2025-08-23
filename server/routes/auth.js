@@ -68,8 +68,8 @@ router.post('/register', [
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      path: '/', // Ensure cookie is available for all paths
-      domain: process.env.NODE_ENV === 'production' ? undefined : undefined // Let browser handle domain
+      path: '/',
+      domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
     });
 
     console.log('Cookie set with options:', {
@@ -77,7 +77,7 @@ router.post('/register', [
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
-      domain: process.env.NODE_ENV === 'production' ? undefined : undefined
+      domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
     });
     console.log('Token length:', token.length);
     console.log('Response headers:', res.getHeaders());
@@ -170,8 +170,8 @@ router.post('/login', [
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      path: '/', // Ensure cookie is available for all paths
-      domain: process.env.NODE_ENV === 'production' ? undefined : undefined // Let browser handle domain
+      path: '/',
+      domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
     });
 
     console.log('Cookie set with options:', {
@@ -179,7 +179,7 @@ router.post('/login', [
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
-      domain: process.env.NODE_ENV === 'production' ? undefined : undefined
+      domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
     });
     console.log('Token length:', token.length);
     console.log('Response headers:', res.getHeaders());
@@ -217,7 +217,9 @@ router.post('/logout', (req, res) => {
     res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      path: '/',
+      domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
     });
 
     res.status(200).json({
